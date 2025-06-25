@@ -27,11 +27,11 @@ RA_RANGES = {
     "Samambaia": {"min": 15, "max": 80},
     "Santa Maria": {"min": 10, "max": 75},
     "São Sebastião": {"min": 10, "max": 60},
-    "SCIA (Estrutural)": {"min": 10, "max": 60},
+    "SCIA": {"min": 10, "max": 60},
     "SIA": {"min": 15, "max": 50},
     "Sobradinho": {"min": 10, "max": 80},
     "Sobradinho II": {"min": 10, "max": 75},
-    "Sudoeste/Octogonal": {"min": 5, "max": 50},
+    "Sudoeste e Octogonal": {"min": 5, "max": 50},
     "Taguatinga": {"min": 10, "max": 50},
     "Varjão": {"min": 12, "max": 48},
     "Vicente Pires": {"min": 5, "max": 60},
@@ -46,16 +46,18 @@ CORS(app)
 # Função de teste
 def obter_probabilidade():
     if request.method == "GET":
-        bairro = request.args.get("bairro")
+        regiao_administrativa = request.args.get("regiao_administrativa")
+        hora_ocorencia = request.args.get("hora_ocorencia")
 
-        if not bairro:
-            return jsonify({"erro": "O parâmetro 'bairro' é obrigatório na URL."}), 400
+        if not regiao_administrativa :
+            return jsonify({"erro": "O parâmetro 'bregiao_administrativa' é obrigatório na URL."}), 400
 
-        bairro_formatado = " ".join([word.capitalize() for word in bairro.split()])
+        bairro_formatado = " ".join([word.capitalize() for word in regiao_administrativa .split()])
 
         if bairro_formatado not in RA_RANGES:
+            print(f"Região Administrativa '{bairro_formatado}' não encontrada ou inválida.")
             return jsonify({
-                    "erro": f"Região Administrativa '{bairro_formatado}' não encontrada ou inválida."
+                "erro": f"Região Administrativa '{bairro_formatado}' não encontrada ou inválida."
             }
             ), 404
 
@@ -63,11 +65,11 @@ def obter_probabilidade():
         min_val = ranges["min"]
         max_val = ranges["max"]
 
-        random_value = random.randint(min_val, max_val) / 10000
+        risco = random.randint(min_val, max_val) / 10000
 
-        print(bairro)
+        print(regiao_administrativa, risco)
 
-        return jsonify({"bairro": bairro, "probabilidade": random_value}), 200
+        return jsonify({"regiao_administrativa": regiao_administrativa , "risco": risco}), 200
 
 
 if __name__ == "__main__":
