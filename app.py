@@ -38,6 +38,33 @@ RA_RANGES = {
     "Sol Nascente/Pôr do Sol": {"min": 35, "max": 80},
 }
 
+W_HORA_OCORRENCIA = {
+    0: 2.0,
+    1: 1.9,
+    2: 1.7,
+    3: 1.6,
+    4: 1.4,
+    5: 1.3,
+    6: 1.0,
+    7: 1.0,
+    8: 1.0,
+    9: 1.0,
+    10: 1.0,
+    11: 1.0,
+    12: 1.0,
+    13: 1.0, 
+    14: 1.0, 
+    15: 1.0, 
+    16: 1.0,
+    17: 1.0, 
+    18: 1.1, 
+    19: 1.2, 
+    20: 1.4,
+    21: 1.5, 
+    22: 1.7, 
+    23: 1.9
+}
+
 app = Flask(__name__)
 CORS(app)
 
@@ -47,10 +74,15 @@ CORS(app)
 def obter_probabilidade():
     if request.method == "GET":
         regiao_administrativa = request.args.get("regiao_administrativa")
-        hora_ocorencia = request.args.get("hora_ocorencia")
+        hora_ocorrencia = request.args.get("hora_ocorrencia")
 
         if not regiao_administrativa :
             return jsonify({"erro": "O parâmetro 'bregiao_administrativa' é obrigatório na URL."}), 400
+        
+        #if not hora_ocorrencia:
+        #    hora_ocorrencia = "12:00"
+#
+        print(hora_ocorrencia)
 
         bairro_formatado = " ".join([word.capitalize() for word in regiao_administrativa .split()])
 
@@ -66,6 +98,9 @@ def obter_probabilidade():
         max_val = ranges["max"]
 
         risco = random.randint(min_val, max_val) / 10000
+        hora_inteira = int(hora_ocorrencia.split(":")[0])
+        peso_horario = W_HORA_OCORRENCIA.get(hora_inteira, 1.0)  # fallback para 1.0
+        risco = risco * peso_horario
 
         print(regiao_administrativa, risco)
 
